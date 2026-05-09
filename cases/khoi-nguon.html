@@ -71,18 +71,20 @@
 
         @keyframes pulse-glow { 0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(218,0,0,0.5); } 50% { opacity: 0.6; box-shadow: 0 0 2px rgba(218,0,0,0.2); } }
 
-        .terminal-box { background-color: rgba(5,5,5,0.95); border: 1px solid #333; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.9); backdrop-filter: blur(10px); }
+        .terminal-box { background-color: rgba(5,5,5,0.95); border: 1px solid #333; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.9); backdrop-filter: blur(10px); width: 100%; max-width: 500px; max-h-[90vh]; display: flex; flex-direction: column; }
         .terminal-header { background: #111; border-bottom: 1px solid #333; padding: 10px 16px; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--text-dim); display: flex; justify-content: space-between; align-items: center; }
         @media (min-width: 768px) { .terminal-header { font-size: 12px; } }
         
-        .term-input { background: transparent; border: none; border-bottom: 1px solid var(--text-dim); color: var(--terminal-green); font-family: 'Space Mono', monospace; font-size: 18px; outline: none; text-align: center; width: 100%; padding: 10px 0; text-shadow: 0 0 5px rgba(0,255,65,0.5); border-radius: 0; }
+        .term-input { background: transparent; border: none; border-bottom: 1px solid var(--text-dim); color: var(--terminal-green); font-family: 'Space Mono', monospace; font-size: 16px; outline: none; text-align: center; width: 100%; padding: 10px 0; text-shadow: 0 0 5px rgba(0,255,65,0.5); border-radius: 0; }
+        @media (min-width: 768px) { .term-input { font-size: 18px; } }
         .term-input:focus { border-bottom-color: var(--terminal-green); }
 
-        .term-choice { border: 1px solid #333; background: #0a0a0a; padding: 10px 14px; margin-bottom: 8px; cursor: crosshair; display: flex; align-items: center; color: var(--text-glitch); font-family: 'Space Mono', monospace; font-size: 11px; transition: all 0.2s; }
+        .term-choice { border: 1px solid #333; background: #0a0a0a; padding: 10px 12px; margin-bottom: 8px; cursor: crosshair; display: flex; align-items: center; color: var(--text-glitch); font-family: 'Space Mono', monospace; font-size: 11px; transition: all 0.2s; }
         @media (min-width: 768px) { .term-choice { padding: 12px 16px; font-size: 13px; } }
         .term-choice:hover { border-color: #555; background: #151515; }
         .term-choice.selected { border-color: var(--blood-red); background: rgba(218,0,0,0.1); color: #fff; }
-        .term-checkbox { width: 14px; height: 14px; border: 1px solid #555; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: transparent; flex-shrink: 0; }
+        
+        .term-checkbox { width: 14px; height: 14px; border: 1px solid #555; margin-right: 10px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: transparent; flex-shrink: 0; }
         @media (min-width: 768px) { .term-checkbox { width: 16px; height: 16px; margin-right: 15px; } }
         .term-choice.selected .term-checkbox { border-color: var(--blood-red); color: var(--blood-red); }
         .term-choice.selected .term-checkbox::before { content: 'X'; }
@@ -95,10 +97,12 @@
 
         .view-hidden { display: none !important; }
         ::selection { background: var(--blood-red); color: white; }
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: var(--bg-void); }
-        ::-webkit-scrollbar-thumb { background: #333; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--blood-red); }
+        
+        /* Tùy chỉnh thanh cuộn để cuộn mượt trên Mobile */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: var(--bg-void); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--blood-red); }
     </style>
 </head>
 <body class="antialiased h-screen flex flex-col overflow-hidden bg-black">
@@ -108,41 +112,41 @@
 
 <div class="flex-1 h-full relative" id="main-container">
 
-    <!-- BẢNG KHÓA (MODAL BẢO MẬT) -->
+    <!-- BẢNG KHÓA (MODAL BẢO MẬT TỐI ƯU MOBILE) -->
     <div class="fixed inset-0 z-[60] bg-[rgba(0,0,0,0.9)] backdrop-blur-md flex items-center justify-center p-4 transition-opacity duration-500" id="locked-modal">
-        <div class="bg-[#050505] border border-[#333] p-6 md:p-8 max-w-md w-full relative shadow-[0_0_30px_rgba(218,0,0,0.15)] max-h-[90vh] overflow-y-auto custom-scrollbar">
+        <div class="bg-[#050505] border border-[#333] p-5 md:p-8 max-w-md w-full relative shadow-[0_0_30px_rgba(218,0,0,0.15)] max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div class="absolute top-0 left-0 w-full h-1 bg-[var(--blood-red)]"></div>
-            <button class="absolute top-4 right-4 text-[#555] hover:text-white transition-colors" onclick="window.location.href='../index.html'">
-                <i class="w-5 h-5" data-lucide="x"></i>
+            <button class="absolute top-3 right-3 md:top-4 md:right-4 text-[#555] hover:text-white transition-colors p-2" onclick="window.location.href='../index.html'">
+                <i class="w-5 h-5 md:w-6 md:h-6" data-lucide="x"></i>
             </button>
             
-            <div class="mb-6 mt-4 md:mt-0 text-center md:text-left">
+            <div class="mb-5 md:mb-6 mt-6 md:mt-0 text-center md:text-left">
                 <i class="w-10 h-10 md:w-12 md:h-12 text-[var(--blood-red)] mb-4 mx-auto md:mx-0" data-lucide="shield-alert"></i>
                 <div class="font-mono text-[9px] md:text-[10px] text-[var(--blood-red)] border border-[var(--blood-red)] inline-block px-2 py-0.5 mb-3">SECURITY LOCK - CASE 01</div>
                 <h2 class="text-white font-bold text-lg md:text-xl uppercase tracking-wide mb-2" id="locked-case-title">DỮ LIỆU ĐÃ MÃ HÓA</h2>
-                <p class="text-[#888] text-xs md:text-sm font-mono mb-4">Yêu cầu quét mã quang học (QR) từ hồ sơ "KHỞI NGUỒN" hoặc nhập mật mã.</p>
+                <p class="text-[#888] text-xs md:text-sm font-mono mb-4 md:mb-5">Yêu cầu quét mã quang học (QR) từ hồ sơ "KHỞI NGUỒN" hoặc nhập mật mã.</p>
                 
                 <input type="password" id="manual-passcode" class="term-input mb-4 text-center border-[#333] focus:border-[var(--blood-red)] text-white" placeholder="ENTER OVERRIDE CODE" />
             </div>
             
             <div class="flex flex-col gap-3">
-                <button class="w-full btn-brutal border-[#333] text-white hover:border-[var(--blood-red)] py-3" onclick="checkManualPasscode()">
+                <button class="w-full btn-brutal border-[#333] text-white hover:border-[var(--blood-red)] py-3 md:py-3.5" onclick="checkManualPasscode()">
                     [ XÁC NHẬN MẬT MÃ ]
                 </button>
                 <div class="text-center font-mono text-[9px] text-[#555]">- OR -</div>
-                <button class="w-full btn-brutal border-[var(--blood-red)] text-[var(--blood-red)] hover:text-white py-3" onclick="openScannerModalSafe()">
+                <button class="w-full btn-brutal border-[var(--blood-red)] text-[var(--blood-red)] hover:text-white py-3 md:py-3.5" onclick="openScannerModalSafe()">
                     [ KHỞI ĐỘNG MÁY QUÉT QR ]
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- QUÉT QR (SCANNER MODAL) -->
+    <!-- QUÉT QR (SCANNER MODAL TỐI ƯU MOBILE) -->
     <div class="view-hidden fixed inset-0 z-[70] bg-[#000] flex items-center justify-center p-4" id="scanner-modal">
         <div class="bg-[#050505] border border-[#222] p-4 md:p-6 max-w-[400px] w-full relative flex flex-col items-center max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div class="w-full flex justify-between items-center mb-4 md:mb-6 font-mono text-[9px] md:text-[10px] text-[#555] border-b border-[#222] pb-2">
                 <span>OPTICAL_UPLINK</span>
-                <button class="hover:text-white" onclick="closeScannerModal()">[ ABORT ]</button>
+                <button class="hover:text-white p-1" onclick="closeScannerModal()">[ ABORT ]</button>
             </div>
             
             <div class="relative w-full aspect-square max-w-[240px] md:max-w-[280px] mb-4 md:mb-6 mx-auto">
@@ -155,39 +159,40 @@
                 <div class="w-full h-full bg-[#111] overflow-hidden" id="qr-reader"></div>
             </div>
             <p class="text-[var(--blood-red)] font-mono text-[9px] md:text-[10px] mb-4 hidden text-center uppercase" id="camera-error">ERR: Camera Feed Unavailable.</p>
-            <p class="text-[#888] font-mono text-[9px] md:text-[10px] mb-2 uppercase animate-pulse" id="scanner-status">Awaiting visual input...</p>
+            <p class="text-[#888] font-mono text-[9px] md:text-[10px] mb-2 uppercase animate-pulse text-center" id="scanner-status">Awaiting visual input...</p>
         </div>
     </div>
 
     <!-- MẶT BÀN CHƠI GAME (GAMEPLAY) -->
     <main class="view-hidden absolute inset-0 z-[50] flex-col cursor-crosshair opacity-0 transition-opacity duration-1000" id="view-gameplay">
         
-        <div class="absolute top-4 left-4 md:top-6 md:left-6 z-50 flex items-center gap-2 md:gap-4">
+        <!-- HUD cho mobile được thu nhỏ padding để không vướng -->
+        <div class="absolute top-3 left-3 md:top-6 md:left-6 z-50 flex items-center gap-2 md:gap-4">
             <button class="btn-brutal px-2 py-1 md:px-3 md:py-2 bg-black/80 backdrop-blur border-[#333] hover:border-white" onclick="window.location.href='../index.html'">
                 <i class="w-4 h-4 md:w-5 md:h-5" data-lucide="arrow-left"></i>
             </button>
-            <div class="bg-black/80 backdrop-blur border border-[#333] px-3 py-1.5 md:px-4 md:py-2 flex flex-col">
-               <span class="font-mono text-[7px] md:text-[8px] text-[#666] tracking-widest">ACTIVE CONNECTION</span>
-               <span class="font-bold text-xs md:text-sm text-white tracking-widest">CASE_01</span>
+            <div class="bg-black/80 backdrop-blur border border-[#333] px-2 py-1 md:px-4 md:py-2 flex flex-col">
+               <span class="font-mono text-[6px] md:text-[8px] text-[#666] tracking-widest">ACTIVE CONNECTION</span>
+               <span class="font-bold text-[10px] md:text-sm text-white tracking-widest">CASE_01</span>
             </div>
         </div>
         
-        <div class="absolute top-4 right-4 md:top-6 md:right-6 z-50 pointer-events-none text-right">
-            <div class="font-black text-xl md:text-2xl tracking-tighter text-[#222] uppercase leading-none">KHỞI NGUỒN</div>
-            <div class="font-mono text-[7px] md:text-[8px] text-[var(--blood-red)] tracking-widest">OSINT TERMINAL</div>
+        <div class="absolute top-3 right-3 md:top-6 md:right-6 z-50 pointer-events-none text-right">
+            <div class="font-black text-lg md:text-2xl tracking-tighter text-[#222] uppercase leading-none">KHỞI NGUỒN</div>
+            <div class="font-mono text-[6px] md:text-[8px] text-[var(--blood-red)] tracking-widest">OSINT TERMINAL</div>
         </div>
 
         <div class="relative w-full h-full overflow-hidden bg-[#050505]">
             <!-- Ảnh nền Case Khởi Nguồn -->
-            <img alt="Origin Scene" class="absolute inset-0 w-full h-full object-cover opacity-60 md:opacity-70" id="gameplay-bg" src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1920" style="filter: grayscale(100%) contrast(1.5) brightness(0.7);"/>
+            <img alt="Origin Scene" class="absolute inset-0 w-full h-full object-cover opacity-60 md:opacity-70" id="gameplay-bg" src="https://images.unsplash.com/photo-1549887552-cb1071d3e5ca?q=80&w=1920" style="filter: grayscale(100%) contrast(1.5) brightness(0.7);"/>
             <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(circle at center, transparent 10%, #000 120%);"></div>
             <div class="absolute inset-0 w-full h-full" id="hotspots-container"></div>
         </div>
     </main>
 
     <!-- BẢNG GIẢI MÃ BÊN TRONG GAME (TERMINAL PUZZLE) -->
-    <div class="view-hidden fixed inset-0 z-[110] bg-[rgba(0,0,0,0.85)] backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity duration-300" id="puzzle-modal">
-        <div class="terminal-box w-full max-w-[500px] max-h-[90vh] flex flex-col" id="puzzle-container">
+    <div class="view-hidden fixed inset-0 z-[110] bg-[rgba(0,0,0,0.85)] backdrop-blur-sm flex items-center justify-center p-3 opacity-0 transition-opacity duration-300" id="puzzle-modal">
+        <div class="terminal-box" id="puzzle-container">
             <!-- Nội dung sẽ được tạo bởi JS -->
         </div>
     </div>
@@ -196,11 +201,10 @@
 
 <!-- JAVASCRIPT -->
 <script type="text/javascript">
-    // --- CẤU HÌNH CASE KHỞI NGUỒN ---
-    const CASE_PASSCODE = '1998'; 
+    // Dùng 'var' thay cho 'const/let' để tránh lỗi SyntaxError khi Hot-Reload trên trình duyệt
+    var CASE_PASSCODE = '1998'; 
 
-    // DỮ LIỆU ĐIỂM NGẮM (HOTSPOTS)
-    const HOTSPOTS_DATA = [
+    var HOTSPOTS_DATA = [
         { 
             id: 'hs1', label: 'HỒ SƠ GỐC', x: 30, y: 35, type: 'passcode', 
             question: 'Nhập mã số phân loại của xấp hồ sơ bị bôi đen năm 1998 (4 chữ số):', 
@@ -226,18 +230,22 @@
         }
     ];
 
+    var currentHotspotId = null;
+    var userSelections = []; 
+    var html5QrcodeScanner = null;
+
     // --- HỆ THỐNG ÂM THANH (WEB AUDIO API) ---
     function playSuccessSound() {
         try {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            const ctx = new AudioContext();
-            const osc1 = ctx.createOscillator(); const gain1 = ctx.createGain();
+            var AudioContext = window.AudioContext || window.webkitAudioContext;
+            var ctx = new AudioContext();
+            var osc1 = ctx.createOscillator(); var gain1 = ctx.createGain();
             osc1.type = 'sine'; osc1.frequency.setValueAtTime(880, ctx.currentTime);
             gain1.gain.setValueAtTime(0.1, ctx.currentTime); gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
             osc1.connect(gain1); gain1.connect(ctx.destination);
             osc1.start(ctx.currentTime); osc1.stop(ctx.currentTime + 0.1);
 
-            const osc2 = ctx.createOscillator(); const gain2 = ctx.createGain();
+            var osc2 = ctx.createOscillator(); var gain2 = ctx.createGain();
             osc2.type = 'sine'; osc2.frequency.setValueAtTime(1760, ctx.currentTime + 0.15);
             gain2.gain.setValueAtTime(0.1, ctx.currentTime + 0.15); gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
             osc2.connect(gain2); gain2.connect(ctx.destination);
@@ -247,19 +255,15 @@
 
     function playErrorSound() {
         try {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            const ctx = new AudioContext();
-            const osc = ctx.createOscillator(); const gain = ctx.createGain();
+            var AudioContext = window.AudioContext || window.webkitAudioContext;
+            var ctx = new AudioContext();
+            var osc = ctx.createOscillator(); var gain = ctx.createGain();
             osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, ctx.currentTime);
             gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
             osc.connect(gain); gain.connect(ctx.destination);
             osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.3);
         } catch (e) { }
     }
-
-    let currentHotspotId = null;
-    let userSelections = []; 
-    let html5QrcodeScanner = null;
 
     document.addEventListener("DOMContentLoaded", () => {
         if (typeof lucide !== 'undefined') { lucide.createIcons(); }
@@ -270,7 +274,7 @@
 
     function unlockGameplay() {
         playSuccessSound();
-        const modal = document.getElementById('locked-modal');
+        var modal = document.getElementById('locked-modal');
         modal.classList.replace('opacity-100', 'opacity-0');
         
         setTimeout(() => {
@@ -282,7 +286,7 @@
                 </div>
             `).join('');
             
-            const gameplay = document.getElementById('view-gameplay');
+            var gameplay = document.getElementById('view-gameplay');
             gameplay.classList.remove('view-hidden');
             setTimeout(() => { gameplay.classList.replace('opacity-0', 'opacity-100'); }, 50);
             if (typeof lucide !== 'undefined') { lucide.createIcons(); }
@@ -290,11 +294,11 @@
     }
 
     function checkManualPasscode() {
-        const input = document.getElementById('manual-passcode').value.trim().toUpperCase();
+        var input = document.getElementById('manual-passcode').value.trim().toUpperCase();
         if (input === CASE_PASSCODE) { unlockGameplay(); } 
         else {
             playErrorSound();
-            const box = document.getElementById('locked-modal').firstElementChild;
+            var box = document.getElementById('locked-modal').firstElementChild;
             box.classList.add('animate-shake');
             setTimeout(() => box.classList.remove('animate-shake'), 400);
             document.getElementById('manual-passcode').value = '';
@@ -312,7 +316,7 @@
             html5QrcodeScanner.start(
                 { facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } },
                 (decodedText) => {
-                    const statusEl = document.getElementById('scanner-status');
+                    var statusEl = document.getElementById('scanner-status');
                     if (decodedText.toUpperCase().includes(CASE_PASSCODE)) {
                         statusEl.innerText = 'ACCESS GRANTED. DECRYPTING...';
                         statusEl.classList.replace('text-[#888]', 'text-[var(--terminal-green)]');
@@ -347,42 +351,42 @@
 
     function openPuzzleModal(id) {
         currentHotspotId = id; userSelections = [];
-        const hs = HOTSPOTS_DATA.find(h => h.id === id);
+        var hs = HOTSPOTS_DATA.find(h => h.id === id);
         if(!hs) return;
-        const modal = document.getElementById('puzzle-modal');
+        var modal = document.getElementById('puzzle-modal');
         modal.classList.remove('view-hidden');
         setTimeout(() => modal.classList.add('opacity-100'), 10);
         renderPuzzleContent(hs);
     }
 
     function closePuzzleModal() {
-        const modal = document.getElementById('puzzle-modal');
+        var modal = document.getElementById('puzzle-modal');
         modal.classList.remove('opacity-100');
         setTimeout(() => modal.classList.add('view-hidden'), 300);
     }
 
     function renderPuzzleContent(hs) {
-        let html = `
+        var html = `
             <div class="terminal-header flex-shrink-0">
                 <span>// ENIGMA_DECRYPT_TOOL</span>
-                <button onclick="closePuzzleModal()" class="hover:text-white p-1"><i data-lucide="x" class="w-4 h-4"></i></button>
+                <button onclick="closePuzzleModal()" class="hover:text-white p-2 md:p-1"><i data-lucide="x" class="w-4 h-4 md:w-5 md:h-5"></i></button>
             </div>
-            <div class="p-5 md:p-8 flex-1 overflow-y-auto custom-scrollbar">
+            <div class="p-4 md:p-8 flex-1 overflow-y-auto custom-scrollbar">
         `;
 
         if (hs.isUnlocked) {
             html += `<div class="mb-4 inline-block font-mono text-[9px] md:text-[10px] text-[var(--terminal-green)] border border-[var(--terminal-green)] px-2 py-1 bg-[rgba(0,255,65,0.1)]">DECRYPTION SUCCESSFUL</div>
-                    ${hs.unlockedImage ? `<img src="${hs.unlockedImage}" class="w-full h-auto mb-5 md:mb-6 border border-[#333] filter grayscale(50%)" />` : ''}
+                    ${hs.unlockedImage ? `<img src="${hs.unlockedImage}" class="w-full h-auto mb-4 md:mb-6 border border-[#333] filter grayscale(50%)" />` : ''}
                     <p class="font-mono text-xs md:text-sm leading-relaxed text-[#ddd] mb-6 md:mb-8 border-l-2 border-[var(--terminal-green)] pl-3 md:pl-4">${hs.unlockedText}</p>
-                    <button onclick="closePuzzleModal()" class="w-full btn-brutal border-[#333] hover:border-white">CLOSE_FILE</button>`;
+                    <button onclick="closePuzzleModal()" class="w-full btn-brutal border-[#333] hover:border-white py-3 md:py-2.5">CLOSE_FILE</button>`;
         } else {
             html += `<div class="mb-4 inline-block font-mono text-[9px] md:text-[10px] text-[var(--blood-red)] border border-[var(--blood-red)] px-2 py-1 bg-[rgba(218,0,0,0.1)] animate-pulse">ENCRYPTED NODE</div>
-                     <h3 class="font-bold text-base md:text-lg text-white mb-6 md:mb-8 leading-snug">${hs.question}</h3>`;
+                     <h3 class="font-bold text-sm md:text-lg text-white mb-5 md:mb-8 leading-snug">${hs.question}</h3>`;
             
             if (hs.type === 'passcode') {
-                html += `<div class="mb-6 md:mb-8"><input type="text" id="puzzle-input" class="term-input" placeholder=">_ INPUT_CODE" autocomplete="off" /></div>`;
+                html += `<div class="mb-5 md:mb-8"><input type="text" id="puzzle-input" class="term-input py-2 md:py-3" placeholder=">_ INPUT_CODE" autocomplete="off" /></div>`;
             } else {
-                html += `<div class="space-y-2 mb-6 md:mb-8">`;
+                html += `<div class="space-y-2 mb-5 md:mb-8">`;
                 hs.options.forEach((opt, idx) => {
                     html += `<div class="term-choice ${userSelections.includes(idx) ? 'selected' : ''}" onclick="toggleOption(${idx}, '${hs.type}')">
                                 <div class="term-checkbox"></div><span>${opt}</span>
@@ -390,7 +394,7 @@
                 });
                 html += `</div>`;
             }
-            html += `<div class="flex gap-3 md:gap-4 mt-auto pt-2">
+            html += `<div class="flex gap-2 md:gap-4 mt-auto pt-2">
                         <button onclick="verifyPuzzle()" class="flex-1 btn-brutal border-[#444] hover:border-[var(--terminal-green)] hover:text-[var(--terminal-green)] py-3 md:py-2.5">EXECUTE</button>
                         <button class="btn-brutal border-[#222] text-[#555] hover:text-[#888] cursor-not-allowed px-4 py-3 md:py-2.5" title="Not available"><i data-lucide="help-circle" class="w-4 h-4 md:w-5 md:h-5"></i></button>
                      </div>`;
@@ -403,15 +407,15 @@
     function toggleOption(index, type) {
         if (type === 'single-choice') userSelections = [index];
         else {
-            const idx = userSelections.indexOf(index);
+            var idx = userSelections.indexOf(index);
             if (idx > -1) userSelections.splice(idx, 1); else userSelections.push(index);
         }
         renderPuzzleContent(HOTSPOTS_DATA.find(h => h.id === currentHotspotId));
     }
 
     function verifyPuzzle() {
-        const hs = HOTSPOTS_DATA.find(h => h.id === currentHotspotId);
-        let isCorrect = false;
+        var hs = HOTSPOTS_DATA.find(h => h.id === currentHotspotId);
+        var isCorrect = false;
         if (hs.type === 'passcode') isCorrect = (document.getElementById('puzzle-input').value.trim() === hs.passcode);
         else isCorrect = (userSelections.length === hs.correctAnswers.length && userSelections.every(val => hs.correctAnswers.includes(val)));
 
@@ -419,7 +423,7 @@
             playSuccessSound(); hs.isUnlocked = true; renderPuzzleContent(hs); 
         } else {
             playErrorSound(); 
-            const el = document.getElementById('puzzle-container');
+            var el = document.getElementById('puzzle-container');
             el.classList.add('animate-shake');
             setTimeout(() => el.classList.remove('animate-shake'), 400);
         }
