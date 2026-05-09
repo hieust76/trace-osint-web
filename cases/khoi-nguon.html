@@ -105,7 +105,7 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--blood-red); }
     </style>
 </head>
-<body class="antialiased h-screen flex flex-col overflow-hidden bg-black">
+<body class="antialiased h-[100dvh] flex flex-col overflow-hidden bg-black">
 
 <div class="crt-overlay"></div>
 <div class="noise-overlay"></div>
@@ -116,11 +116,11 @@
     <div class="fixed inset-0 z-[60] bg-[rgba(0,0,0,0.9)] backdrop-blur-md flex items-center justify-center p-4 transition-opacity duration-500" id="locked-modal">
         <div class="bg-[#050505] border border-[#333] p-5 md:p-8 max-w-md w-full relative shadow-[0_0_30px_rgba(218,0,0,0.15)] max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div class="absolute top-0 left-0 w-full h-1 bg-[var(--blood-red)]"></div>
-            <button class="absolute top-3 right-3 md:top-4 md:right-4 text-[#555] hover:text-white transition-colors p-2" onclick="window.location.href='../index.html'">
-                <i class="w-5 h-5 md:w-6 md:h-6" data-lucide="x"></i>
+            <button class="absolute top-2 right-2 md:top-4 md:right-4 text-[#555] hover:text-white transition-colors p-3" onclick="window.location.href='../index.html#games'">
+                <i class="w-6 h-6" data-lucide="x"></i>
             </button>
             
-            <div class="mb-5 md:mb-6 mt-6 md:mt-0 text-center md:text-left">
+            <div class="mb-5 md:mb-6 mt-8 md:mt-0 text-center md:text-left">
                 <i class="w-10 h-10 md:w-12 md:h-12 text-[var(--blood-red)] mb-4 mx-auto md:mx-0" data-lucide="shield-alert"></i>
                 <div class="font-mono text-[9px] md:text-[10px] text-[var(--blood-red)] border border-[var(--blood-red)] inline-block px-2 py-0.5 mb-3">SECURITY LOCK - CASE 01</div>
                 <h2 class="text-white font-bold text-lg md:text-xl uppercase tracking-wide mb-2" id="locked-case-title">DỮ LIỆU ĐÃ MÃ HÓA</h2>
@@ -167,17 +167,17 @@
     <main class="view-hidden absolute inset-0 z-[50] flex-col cursor-crosshair opacity-0 transition-opacity duration-1000" id="view-gameplay">
         
         <!-- HUD cho mobile được thu nhỏ padding để không vướng -->
-        <div class="absolute top-3 left-3 md:top-6 md:left-6 z-50 flex items-center gap-2 md:gap-4">
-            <button class="btn-brutal px-2 py-1 md:px-3 md:py-2 bg-black/80 backdrop-blur border-[#333] hover:border-white" onclick="window.location.href='../index.html'">
-                <i class="w-4 h-4 md:w-5 md:h-5" data-lucide="arrow-left"></i>
+        <div class="absolute top-4 left-4 md:top-6 md:left-6 z-[60] flex items-center gap-2 md:gap-4">
+            <button class="btn-brutal px-3 py-2 md:px-4 md:py-3 bg-black/80 backdrop-blur border-[#333] hover:border-white" onclick="window.location.href='../index.html#games'">
+                <i class="w-5 h-5 md:w-6 md:h-6" data-lucide="arrow-left"></i>
             </button>
-            <div class="bg-black/80 backdrop-blur border border-[#333] px-2 py-1 md:px-4 md:py-2 flex flex-col">
-               <span class="font-mono text-[6px] md:text-[8px] text-[#666] tracking-widest">ACTIVE CONNECTION</span>
-               <span class="font-bold text-[10px] md:text-sm text-white tracking-widest">CASE_01</span>
+            <div class="bg-black/80 backdrop-blur border border-[#333] px-3 py-1.5 md:px-4 md:py-2 flex flex-col justify-center">
+               <span class="font-mono text-[7px] md:text-[8px] text-[#666] tracking-widest leading-none mb-1">ACTIVE CONNECTION</span>
+               <span class="font-bold text-[11px] md:text-sm text-white tracking-widest leading-none">CASE_01</span>
             </div>
         </div>
         
-        <div class="absolute top-3 right-3 md:top-6 md:right-6 z-50 pointer-events-none text-right">
+        <div class="absolute top-4 right-4 md:top-6 md:right-6 z-[60] pointer-events-none text-right">
             <div class="font-black text-lg md:text-2xl tracking-tighter text-[#222] uppercase leading-none">KHỞI NGUỒN</div>
             <div class="font-mono text-[6px] md:text-[8px] text-[var(--blood-red)] tracking-widest">OSINT TERMINAL</div>
         </div>
