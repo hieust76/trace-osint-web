@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
-    <title>CASE 02: MẬT THẤT R302 | THE ENIGMA ARCHIVES</title>
+    <title>CASE 01: KHỞI NGUỒN | THE ENIGMA ARCHIVES</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -118,9 +118,9 @@
             
             <div class="mb-6 mt-4 md:mt-0 text-center md:text-left">
                 <i class="w-10 h-10 md:w-12 md:h-12 text-[var(--blood-red)] mb-4 mx-auto md:mx-0" data-lucide="shield-alert"></i>
-                <div class="font-mono text-[9px] md:text-[10px] text-[var(--blood-red)] border border-[var(--blood-red)] inline-block px-2 py-0.5 mb-3">SECURITY LOCK - CASE 02</div>
+                <div class="font-mono text-[9px] md:text-[10px] text-[var(--blood-red)] border border-[var(--blood-red)] inline-block px-2 py-0.5 mb-3">SECURITY LOCK - CASE 01</div>
                 <h2 class="text-white font-bold text-lg md:text-xl uppercase tracking-wide mb-2" id="locked-case-title">DỮ LIỆU ĐÃ MÃ HÓA</h2>
-                <p class="text-[#888] text-xs md:text-sm font-mono mb-4">Yêu cầu quét mã quang học (QR) từ hồ sơ "MẬT THẤT R302" hoặc nhập mật mã.</p>
+                <p class="text-[#888] text-xs md:text-sm font-mono mb-4">Yêu cầu quét mã quang học (QR) từ hồ sơ "KHỞI NGUỒN" hoặc nhập mật mã.</p>
                 
                 <input type="password" id="manual-passcode" class="term-input mb-4 text-center border-[#333] focus:border-[var(--blood-red)] text-white" placeholder="ENTER OVERRIDE CODE" />
             </div>
@@ -168,18 +168,18 @@
             </button>
             <div class="bg-black/80 backdrop-blur border border-[#333] px-3 py-1.5 md:px-4 md:py-2 flex flex-col">
                <span class="font-mono text-[7px] md:text-[8px] text-[#666] tracking-widest">ACTIVE CONNECTION</span>
-               <span class="font-bold text-xs md:text-sm text-white tracking-widest">CASE_02</span>
+               <span class="font-bold text-xs md:text-sm text-white tracking-widest">CASE_01</span>
             </div>
         </div>
         
         <div class="absolute top-4 right-4 md:top-6 md:right-6 z-50 pointer-events-none text-right">
-            <div class="font-black text-xl md:text-2xl tracking-tighter text-[#222] uppercase leading-none">MẬT THẤT R302</div>
+            <div class="font-black text-xl md:text-2xl tracking-tighter text-[#222] uppercase leading-none">KHỞI NGUỒN</div>
             <div class="font-mono text-[7px] md:text-[8px] text-[var(--blood-red)] tracking-widest">OSINT TERMINAL</div>
         </div>
 
         <div class="relative w-full h-full overflow-hidden bg-[#050505]">
-            <!-- Ảnh nền Case R302 -->
-            <img alt="Locked Room Scene" class="absolute inset-0 w-full h-full object-cover opacity-60 md:opacity-70" id="gameplay-bg" src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1920" style="filter: grayscale(100%) contrast(1.5) brightness(0.7);"/>
+            <!-- Ảnh nền Case Khởi Nguồn -->
+            <img alt="Origin Scene" class="absolute inset-0 w-full h-full object-cover opacity-60 md:opacity-70" id="gameplay-bg" src="https://images.unsplash.com/photo-1549887552-cb1071d3e5ca?q=80&w=1920" style="filter: grayscale(100%) contrast(1.5) brightness(0.7);"/>
             <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(circle at center, transparent 10%, #000 120%);"></div>
             <div class="absolute inset-0 w-full h-full" id="hotspots-container"></div>
         </div>
@@ -196,34 +196,32 @@
 
 <!-- JAVASCRIPT -->
 <script type="text/javascript">
-    // --- CẤU HÌNH CASE MẬT THẤT R302 ---
-    const CASE_PASSCODE = 'R302'; 
+    // --- CẤU HÌNH CASE KHỞI NGUỒN ---
+    const CASE_PASSCODE = '1998'; 
 
-    // DỮ LIỆU ĐIỂM NGẮM (HOTSPOTS) Dựa trên dữ liệu cũ của bạn
+    // DỮ LIỆU ĐIỂM NGẮM (HOTSPOTS)
     const HOTSPOTS_DATA = [
         { 
-            id: 'hs1', label: 'TỬ THI', x: 42, y: 35, type: 'passcode', 
-            question: 'Yêu cầu nhập mã đối chiếu độc dược tìm thấy (4 số):', 
-            passcode: '7829', 
-            unlockedText: 'Phân tích phổ đồ: Temazepam 30mg. Nạn nhân bị đánh thuốc mê sâu trước khi tử vong, loại trừ khả năng tự sát.', 
+            id: 'hs1', label: 'HỒ SƠ GỐC', x: 30, y: 35, type: 'passcode', 
+            question: 'Nhập mã số phân loại của xấp hồ sơ bị bôi đen năm 1998 (4 chữ số):', 
+            passcode: '0401', 
+            unlockedText: 'TRUY CẬP HỒ SƠ 0401 THÀNH CÔNG: Đây là báo cáo đầu tiên có nhắc đến bí danh tổ chức. Đa phần nội dung đã bị CIA tẩy xóa.', 
             isUnlocked: false 
         },
         { 
-            id: 'hs2', label: 'LỜI KHAI', x: 25, y: 25, type: 'single-choice', 
-            question: 'Trích xuất băng ghi âm: Đối tượng nào khai báo giả mạo lịch trình?', 
-            options: ['Hoàng Mỹ Duyên', 'Kim Mai Hà', 'Đoàn Mạnh Hào', 'Nguyễn Minh Tuân', 'Hồ Trí Phú'], 
-            correctAnswers: [1], 
-            unlockedText: 'Mâu thuẫn thời gian: Kim Mai Hà xác nhận không rời khỏi nhà, nhưng Camera giao thông ghi nhận xe đối tượng tại khu vực hiện trường lúc 23:15.', 
-            unlockedImage: 'https://images.unsplash.com/photo-1611077544831-2917e7535547?q=80&w=600', 
+            id: 'hs2', label: 'MÁY ĐÁNH CHỮ', x: 75, y: 65, type: 'single-choice', 
+            question: 'Phân tích dải ruy-băng trên máy đánh chữ thu được tại hiện trường. Font chữ này thuộc dòng máy nào?', 
+            options: ['Remington No.2', 'Underwood Standard', 'Olympia Splendid', 'Olivetti Lettera'], 
+            correctAnswers: [2], 
+            unlockedText: 'KHỚP NỐI: Olympia Splendid. Đây là dòng máy đắt tiền nhập khẩu từ Đức. Kẻ thủ ác có gu hoài cổ và thu nhập cao.', 
             isUnlocked: false 
         },
         { 
-            id: 'hs3', label: 'BẰNG CHỨNG', x: 68, y: 55, type: 'multi-choice', 
-            question: 'Lựa chọn các bằng chứng cốt lõi để lập lệnh bắt giữ (Chọn 2):', 
-            options: ['Log truy cập Server 404', 'Thư mời dự tiệc tất niên', 'Bản vẽ tòa nhà Ronin', 'Biên bản khám nghiệm R302', 'Báo cáo Giám định pháp y'], 
-            correctAnswers: [1, 4], 
-            unlockedText: 'HỒ SƠ ĐÃ ĐƯỢC CẬP NHẬT LÊN HỆ THỐNG TRUNG TÂM. Nghi phạm chính đã bị khóa mục tiêu.', 
-            unlockedImage: 'https://images.unsplash.com/photo-1628155930542-3c7a64e2c833?q=80&w=600', 
+            id: 'hs3', label: 'ẢNH HIỆN TRƯỜNG', x: 50, y: 75, type: 'multi-choice', 
+            question: 'Hai chi tiết nào trong bức ảnh chụp phòng nạn nhân chỉ ra thời gian tử vong đã bị dàn dựng? (Chọn 2)', 
+            options: ['Đồng hồ quả lắc dừng ở 13:00', 'Có bóng người in trên kính cửa sổ', 'Vết máu có hình giọt thẳng đứng', 'Tách cà phê vẫn còn ấm', 'Tờ lịch trên bàn chỉ ngày hôm sau'], 
+            correctAnswers: [0, 3], 
+            unlockedText: 'PHÂN TÍCH LOGIC: Đồng hồ bị đập vỡ cố tình để đánh lừa thời gian, nhưng tách cà phê ấm chứng tỏ án mạng chỉ mới xảy ra cách đây vài chục phút.', 
             isUnlocked: false 
         }
     ];
