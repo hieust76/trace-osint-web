@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+    <title>CASE 03: MẤT TÍCH | THE ENIGMA ARCHIVES</title>
+    
+    <!-- Tích hợp Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tích hợp Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Tích hợp Thư viện Quét mã QR HTML5 -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+    <!-- Font chữ Độc bản: Space Mono (Tech) & Inter (Readability) -->
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="anonymous" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+
+    <style>
+        :root {
+            --bg-void: #030303;
+            --bg-panel: #0a0a0a;
+            --blood-red: #da0000;
+            --blood-red-dim: #5a0000;
+            --text-glitch: #f0f0f0;
+            --text-dim: #666666;
+            --terminal-green: #00ff41;
+        }
+
+        body {
+            background-color: var(--bg-void); 
+            color: var(--text-glitch); 
+            font-family: 'Inter', sans-serif; 
+            margin: 0; 
+            overflow-x: hidden;
+            cursor: crosshair;
+        }
+
+        /* Lớp phủ màn hình CRT & Noise */
+        .crt-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            z-index: 999; pointer-events: none; opacity: 0.4;
+        }
+        .noise-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+            z-index: 998; pointer-events: none; opacity: 0.8;
+        }
+
+        .font-mono { font-family: 'Space Mono', monospace; }
+
+        .btn-brutal {
+            background: transparent; color: var(--text-glitch); border: 1px solid var(--text-dim);
+            font-family: 'Space Mono', monospace; text-transform: uppercase; font-size: 12px;
+            padding: 10px 16px; transition: all 0.2s; position: relative; overflow: hidden;
+            display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+        .btn-brutal:hover { background: var(--blood-red); border-color: var(--blood-red); color: #fff; box-shadow: 0 0 15px rgba(218,0,0,0.4); }
+        
+        /* Điểm ngắm phá án (Crosshair Hotspots) */
+        .cyber-hotspot {
+            position: absolute; transform: translate(-50%, -50%); cursor: crosshair;
+            display: flex; flex-direction: column; align-items: center; z-index: 20;
+        }
+        .cyber-crosshair {
+            color: var(--blood-red); font-family: 'Space Mono', monospace; font-size: 16px; font-weight: bold;
+            animation: pulse-glow 2s infinite; text-shadow: 0 0 8px var(--blood-red);
+            background: rgba(0,0,0,0.6); width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(218,0,0,0.4); border-radius: 50%;
+        }
+        .cyber-hotspot:hover .cyber-crosshair { transform: scale(1.2); background: rgba(218,0,0,0.4); border-color: var(--blood-red); }
+        
+        .cyber-label {
+            margin-top: 4px; background: rgba(0,0,0,0.85); border: 1px solid rgba(218,0,0,0.5); color: var(--text-glitch);
+            padding: 4px 8px; font-family: 'Space Mono', monospace; font-size: 9px; text-transform: uppercase;
+            letter-spacing: 1px; pointer-events: none; white-space: nowrap; box-shadow: 0 0 5px rgba(0,0,0,0.5);
+            transition: all 0.2s ease;
+        }
+        .cyber-hotspot:hover .cyber-label {
+            border-color: var(--blood-red); color: #fff; text-shadow: 0 0 5px var(--blood-red); box-shadow: 0 0 8px rgba(218,0,0,0.3);
+        }
+
+        @keyframes pulse-glow { 0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(218,0,0,0.5); } 50% { opacity: 0.6; box-shadow: 0 0 2px rgba(218,0,0,0.2); } }
+
+        /* Bảng Terminal Giải Mã (Puzzle Box) */
+        .terminal-box { background-color: rgba(5,5,5,0.95); border: 1px solid #333; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.9); backdrop-filter: blur(10px); }
+        .terminal-header { background: #111; border-bottom: 1px solid #333; padding: 10px 16px; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--text-dim); display: flex; justify-content: space-between; align-items: center; }
+        @media (min-width: 768px) { .terminal-header { font-size: 12px; } }
+        
+        .term-input { background: transparent; border: none; border-bottom: 1px solid var(--text-dim); color: var(--terminal-green); font-family: 'Space Mono', monospace; font-size: 18px; outline: none; text-align: center; width: 100%; padding: 10px 0; text-shadow: 0 0 5px rgba(0,255,65,0.5); border-radius: 0; }
+        .term-input:focus { border-bottom-color: var(--terminal-green); }
+
+        .term-choice { border: 1px solid #333; background: #0a0a0a; padding: 10px 14px; margin-bottom: 8px; cursor: crosshair; display: flex; align-items: center; color: var(--text-glitch); font-family: 'Space Mono', monospace; font-size: 11px; transition: all 0.2s; }
+        @media (min-width: 768px) { .term-choice { padding: 12px 16px; font-size: 13px; } }
+        .term-choice:hover { border-color: #555; background: #151515; }
+        .term-choice.selected { border-color: var(--blood-red); background: rgba(218,0,0,0.1); color: #fff; }
+        .term-checkbox { width: 14px; height: 14px; border: 1px solid #555; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: transparent; flex-shrink: 0; }
+        @media (min-width: 768px) { .term-checkbox { width: 16px; height: 16px; margin-right: 15px; } }
+        .term-choice.selected .term-checkbox { border-color: var(--blood-red); color: var(--blood-red); }
+        .term-choice.selected .term-checkbox::before { content: 'X'; }
+
+        /* Camera QR */
+        #qr-reader { border: none !important; }
+        #qr-reader video { object-fit: cover !important; width: 100% !important; height: 100% !important; filter: grayscale(100%) contrast(1.2); }
+
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        .animate-shake { animation: shake 0.2s ease-in-out 0s 2; border-color: var(--blood-red) !important; }
+
+        .view-hidden { display: none !important; }
+        ::selection { background: var(--blood-red); color: white; }
+
+        /* Tùy chỉnh thanh cuộn */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg-void); }
+        ::-webkit-scrollbar-thumb { background: #333; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--blood-red); }
+    </style>
+</head>
+<body class="antialiased h-screen flex flex-col overflow-hidden bg-black">
+
+<!-- Hiệu ứng phủ màn hình -->
+<div class="crt-overlay"></div>
+<div class="noise-overlay"></div>
+
+<!-- VÙNG CHỨA NỘI DUNG CHÍNH -->
+<div class="flex-1 h-full relative" id="main-container">
+
+    <!-- BẢNG KHÓA (MODAL BẢO MẬT) -->
+    <div class="fixed inset-0 z-[60] bg-[rgba(0,0,0,0.9)] backdrop-blur-md flex items-center justify-center p-4 transition-opacity duration-500" id="locked-modal">
+        <div class="bg-[#050505] border border-[#333] p-6 md:p-8 max-w-md w-full relative shadow-[0_0_30px_rgba(218,0,0,0.15)] max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="absolute top-0 left-0 w-full h-1 bg-[var(--blood-red)]"></div>
+            <!-- LƯU Ý: Nút 'X' sẽ đưa người chơi quay về trang chủ (index.html) -->
+            <button class="absolute top-4 right-4 text-[#555] hover:text-white transition-colors" onclick="window.location.href='../index.html'">
+                <i class="w-5 h-5" data-lucide="x"></i>
+            </button>
+            
+            <div class="mb-6 mt-4 md:mt-0 text-center md:text-left">
+                <i class="w-10 h-10 md:w-12 md:h-12 text-[var(--blood-red)] mb-4 mx-auto md:mx-0" data-lucide="shield-alert"></i>
+                <div class="font-mono text-[9px] md:text-[10px] text-[var(--blood-red)] border border-[var(--blood-red)] inline-block px-2 py-0.5 mb-3">SECURITY LOCK - CASE 03</div>
+                <h2 class="text-white font-bold text-lg md:text-xl uppercase tracking-wide mb-2" id="locked-case-title">DỮ LIỆU ĐÃ MÃ HÓA</h2>
+                <p class="text-[#888] text-xs md:text-sm font-mono mb-4">Yêu cầu quét mã quang học (QR) từ hồ sơ "MẤT TÍCH" hoặc nhập mật mã để mở giao thức truy cập.</p>
+                
+                <input type="password" id="manual-passcode" class="term-input mb-4 text-center border-[#333] focus:border-[var(--blood-red)] text-white" placeholder="ENTER OVERRIDE CODE" />
+            </div>
+            
+            <div class="flex flex-col gap-3">
+                <button class="w-full btn-brutal border-[#333] text-white hover:border-[var(--blood-red)] py-3" onclick="checkManualPasscode()">
+                    [ XÁC NHẬN MẬT MÃ ]
+                </button>
+                <div class="text-center font-mono text-[9px] text-[#555]">- OR -</div>
+                <button class="w-full btn-brutal border-[var(--blood-red)] text-[var(--blood-red)] hover:text-white py-3" onclick="openScannerModalSafe()">
+                    [ KHỞI ĐỘNG MÁY QUÉT QR ]
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUÉT QR (SCANNER MODAL) -->
+    <div class="view-hidden fixed inset-0 z-[70] bg-[#000] flex items-center justify-center p-4" id="scanner-modal">
+        <div class="bg-[#050505] border border-[#222] p-4 md:p-6 max-w-[400px] w-full relative flex flex-col items-center max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="w-full flex justify-between items-center mb-4 md:mb-6 font-mono text-[9px] md:text-[10px] text-[#555] border-b border-[#222] pb-2">
+                <span>OPTICAL_UPLINK</span>
+                <button class="hover:text-white" onclick="closeScannerModal()">[ ABORT ]</button>
+            </div>
+            
+            <div class="relative w-full aspect-square max-w-[240px] md:max-w-[280px] mb-4 md:mb-6 mx-auto">
+                <div class="absolute top-0 left-0 w-6 h-6 md:w-8 md:h-8 border-t-2 border-l-2 border-[var(--blood-red)] z-20 pointer-events-none"></div>
+                <div class="absolute top-0 right-0 w-6 h-6 md:w-8 md:h-8 border-t-2 border-r-2 border-[var(--blood-red)] z-20 pointer-events-none"></div>
+                <div class="absolute bottom-0 left-0 w-6 h-6 md:w-8 md:h-8 border-b-2 border-l-2 border-[var(--blood-red)] z-20 pointer-events-none"></div>
+                <div class="absolute bottom-0 right-0 w-6 h-6 md:w-8 md:h-8 border-b-2 border-r-2 border-[var(--blood-red)] z-20 pointer-events-none"></div>
+                
+                <div class="absolute top-1/2 left-0 w-full h-[1px] bg-[var(--blood-red)] opacity-30 z-20 pointer-events-none"></div>
+                <div class="absolute left-1/2 top-0 w-[1px] h-full bg-[var(--blood-red)] opacity-30 z-20 pointer-events-none"></div>
+
+                <div class="w-full h-full bg-[#111] overflow-hidden" id="qr-reader"></div>
+            </div>
+            <p class="text-[var(--blood-red)] font-mono text-[9px] md:text-[10px] mb-4 hidden text-center uppercase" id="camera-error">ERR: Camera Feed Unavailable.</p>
+            <p class="text-[#888] font-mono text-[9px] md:text-[10px] mb-2 uppercase animate-pulse" id="scanner-status">Awaiting visual input...</p>
+        </div>
+    </div>
+
+    <!-- MẶT BÀN CHƠI GAME (GAMEPLAY) - FULL MÀN HÌNH -->
+    <main class="view-hidden absolute inset-0 z-[50] flex-col cursor-crosshair opacity-0 transition-opacity duration-1000" id="view-gameplay">
+        
+        <!-- Top HUD -->
+        <div class="absolute top-4 left-4 md:top-6 md:left-6 z-50 flex items-center gap-2 md:gap-4">
+            <!-- Nút Trở Về trang chủ ../index.html -->
+            <button class="btn-brutal px-2 py-1 md:px-3 md:py-2 bg-black/80 backdrop-blur border-[#333] hover:border-white" onclick="window.location.href='../index.html'">
+                <i class="w-4 h-4 md:w-5 md:h-5" data-lucide="arrow-left"></i>
+            </button>
+            <div class="bg-black/80 backdrop-blur border border-[#333] px-3 py-1.5 md:px-4 md:py-2 flex flex-col">
+               <span class="font-mono text-[7px] md:text-[8px] text-[#666] tracking-widest">ACTIVE CONNECTION</span>
+               <span class="font-bold text-xs md:text-sm text-white tracking-widest">CASE_03</span>
+            </div>
+        </div>
+        
+        <div class="absolute top-4 right-4 md:top-6 md:right-6 z-50 pointer-events-none text-right">
+            <div class="font-black text-xl md:text-2xl tracking-tighter text-[#222] uppercase leading-none">MẤT TÍCH</div>
+            <div class="font-mono text-[7px] md:text-[8px] text-[var(--blood-red)] tracking-widest">OSINT TERMINAL</div>
+        </div>
+
+        <!-- Background Image -->
+        <div class="relative w-full h-full overflow-hidden bg-[#050505]">
+            <!-- Ảnh nền Case Mất Tích -->
+            <img alt="Missing Person Scene" class="absolute inset-0 w-full h-full object-cover opacity-60 md:opacity-70" id="gameplay-bg" src="https://images.unsplash.com/photo-1595015383321-df19c08642cc?q=80&w=1920" style="filter: grayscale(100%) contrast(1.5) brightness(0.7);"/>
+            <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(circle at center, transparent 10%, #000 120%);"></div>
+            
+            <div class="absolute inset-0 w-full h-full" id="hotspots-container"></div>
+        </div>
+    </main>
+
+    <!-- BẢNG GIẢI MÃ BÊN TRONG GAME (TERMINAL PUZZLE) -->
+    <div class="view-hidden fixed inset-0 z-[110] bg-[rgba(0,0,0,0.85)] backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity duration-300" id="puzzle-modal">
+        <div class="terminal-box w-full max-w-[500px] max-h-[90vh] flex flex-col" id="puzzle-container">
+            <!-- Inner content injected by JS -->
+        </div>
+    </div>
+
+</div>
+
+<!-- JAVASCRIPT -->
+<script type="text/javascript">
+    // --- CẤU HÌNH CASE MẤT TÍCH ---
+    const CASE_PASSCODE = 'MATTICH'; // Mật mã mở khóa Case này
+
+    // DỮ LIỆU ĐIỂM NGẮM (HOTSPOTS) RIÊNG CHO MẤT TÍCH
+    const HOTSPOTS_DATA = [
+        { 
+            id: 'hs1', 
+            label: 'ĐỊNH VỊ GPS', 
+            x: 30, 
+            y: 40, 
+            type: 'passcode', 
+            question: 'Nhập tọa độ cuối cùng thu được từ điện thoại nạn nhân (6 số, định dạng: XX.XXXX):', 
+            passcode: '21.0285', 
+            unlockedText: 'Tọa độ xác nhận: 21.0285 vĩ độ Bắc. Khu vực rừng núi phía Tây Bắc thành phố. Không có trạm phát sóng di động nào trong bán kính 15km.', 
+            isUnlocked: false 
+        },
+        { 
+            id: 'hs2', 
+            label: 'NHẬT KÝ', 
+            x: 70, 
+            y: 60, 
+            type: 'single-choice', 
+            question: 'Trang nhật ký bị xé có nhắc đến một "Kẻ bám đuôi". Người này thường xuất hiện vào thời gian nào?', 
+            options: ['Sáng sớm khi đi tập thể dục', 'Lúc tan tầm tại trạm xe buýt', 'Nửa đêm trước cửa sổ', 'Vào những ngày mưa lớn'], 
+            correctAnswers: [1], 
+            unlockedText: 'Khớp nối dữ liệu Camera an ninh tại trạm xe buýt lộ trình số 07. Đã nhận diện được một đối tượng tình nghi mặc áo khoác đen luôn đứng ở góc khuất.', 
+            unlockedImage: 'https://images.unsplash.com/photo-1542382156909-9ae37b3f56fd?q=80&w=600', 
+            isUnlocked: false 
+        },
+        { 
+            id: 'hs3', 
+            label: 'VẬT CHỨNG', 
+            x: 50, 
+            y: 80, 
+            type: 'multi-choice', 
+            question: 'Trong xe hơi bị bỏ lại, đội khám nghiệm tìm thấy những vật nào không thuộc về nạn nhân? (Chọn 2)', 
+            options: ['Chìa khóa nhà', 'Một chiếc bật lửa Zippo gỉ sét', 'Vé thu phí đường bộ', 'Cuộn dây dù chuyên dụng leo núi', 'Ví tiền rỗng'], 
+            correctAnswers: [1, 3], 
+            unlockedText: 'MẢNH GHÉP QUAN TRỌNG: Kẻ bắt cóc có kinh nghiệm leo núi và hút thuốc lá. Hồ sơ khoanh vùng nghi phạm đã được thu hẹp đáng kể.', 
+            unlockedImage: 'https://images.unsplash.com/photo-1596775988514-61c1626c968f?q=80&w=600', 
+            isUnlocked: false 
+        }
+    ];
+
+    // --- HỆ THỐNG ÂM THANH (WEB AUDIO API) ---
+    function playSuccessSound() {
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            const ctx = new AudioContext();
+            
+            const osc1 = ctx.createOscillator(); const gain1 = ctx.createGain();
+            osc1.type = 'sine'; osc1.frequency.setValueAtTime(880, ctx.currentTime);
+            gain1.gain.setValueAtTime(0.1, ctx.currentTime); gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+            osc1.connect(gain1); gain1.connect(ctx.destination);
+            osc1.start(ctx.currentTime); osc1.stop(ctx.currentTime + 0.1);
+
+            const osc2 = ctx.createOscillator(); const gain2 = ctx.createGain();
+            osc2.type = 'sine'; osc2.frequency.setValueAtTime(1760, ctx.currentTime + 0.15);
+            gain2.gain.setValueAtTime(0.1, ctx.currentTime + 0.15); gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+            osc2.connect(gain2); gain2.connect(ctx.destination);
+            osc2.start(ctx.currentTime + 0.15); osc2.stop(ctx.currentTime + 0.35);
+        } catch (e) { }
+    }
+
+    function playErrorSound() {
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            const ctx = new AudioContext();
+            
+            const osc = ctx.createOscillator(); const gain = ctx.createGain();
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, ctx.currentTime);
+            gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.3);
+        } catch (e) { }
+    }
+
+    // --- KHỞI TẠO TRANG ---
+    let currentHotspotId = null;
+    let userSelections = []; 
+    let html5QrcodeScanner = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+        
+        // Mở khóa nhập passcode bằng Enter
+        document.getElementById('manual-passcode').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') { checkManualPasscode(); }
+        });
+    });
+
+    // --- LOGIC MỞ KHÓA BẢO MẬT ---
+    function unlockGameplay() {
+        playSuccessSound();
+        const modal = document.getElementById('locked-modal');
+        modal.classList.replace('opacity-100', 'opacity-0');
+        
+        setTimeout(() => {
+            modal.classList.add('view-hidden');
+            
+            // Khởi tạo các điểm ngắm
+            document.getElementById('hotspots-container').innerHTML = HOTSPOTS_DATA.map(hs => `
+                <div class="cyber-hotspot" style="top: ${hs.y}%; left: ${hs.x}%;" onclick="openPuzzleModal('${hs.id}')">
+                    <div class="cyber-crosshair">[+]</div>
+                    <div class="cyber-label">${hs.label}</div>
+                </div>
+            `).join('');
+            
+            // Hiển thị Game
+            const gameplay = document.getElementById('view-gameplay');
+            gameplay.classList.remove('view-hidden');
+            setTimeout(() => { gameplay.classList.replace('opacity-0', 'opacity-100'); }, 50);
+            
+            if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+        }, 500);
+    }
+
+    function checkManualPasscode() {
+        const input = document.getElementById('manual-passcode').value.trim().toUpperCase();
+        if (input === CASE_PASSCODE) {
+            unlockGameplay();
+        } else {
+            playErrorSound();
+            const box = document.getElementById('locked-modal').firstElementChild;
+            box.classList.add('animate-shake');
+            setTimeout(() => box.classList.remove('animate-shake'), 400);
+            document.getElementById('manual-passcode').value = '';
+        }
+    }
+
+    // --- MÁY QUÉT QR ---
+    function openScannerModalSafe() {
+        if (typeof Html5Qrcode !== 'undefined') {
+            document.getElementById('locked-modal').classList.add('view-hidden');
+            document.getElementById('scanner-modal').classList.remove('view-hidden');
+            document.getElementById('camera-error').classList.add('hidden');
+            document.getElementById('scanner-status').innerText = 'INITIALIZING SENSOR...';
+
+            if (!html5QrcodeScanner) html5QrcodeScanner = new Html5Qrcode("qr-reader");
+            html5QrcodeScanner.start(
+                { facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } },
+                (decodedText) => {
+                    const statusEl = document.getElementById('scanner-status');
+                    if (decodedText.toUpperCase().includes(CASE_PASSCODE)) {
+                        statusEl.innerText = 'ACCESS GRANTED. DECRYPTING...';
+                        statusEl.classList.replace('text-[#888]', 'text-[var(--terminal-green)]');
+                        
+                        setTimeout(() => {
+                            html5QrcodeScanner.stop();
+                            document.getElementById('scanner-modal').classList.add('view-hidden');
+                            unlockGameplay();
+                        }, 1000);
+                    } else {
+                        playErrorSound();
+                        statusEl.innerText = 'ERR: INVALID SECURITY TOKEN';
+                        statusEl.classList.replace('text-[#888]', 'text-[var(--blood-red)]');
+                        setTimeout(() => { statusEl.innerText = 'Awaiting visual input...'; statusEl.classList.replace('text-[var(--blood-red)]', 'text-[#888]'); }, 2000);
+                    }
+                },
+                (errorMessage) => {}
+            ).catch((err) => { document.getElementById('camera-error').classList.remove('hidden'); });
+        } else {
+            setTimeout(openScannerModalSafe, 500);
+        }
+    }
+
+    function closeScannerModal() {
+        if (html5QrcodeScanner && html5QrcodeScanner.isScanning) {
+            html5QrcodeScanner.stop().then(() => {
+                document.getElementById('scanner-modal').classList.add('view-hidden');
+                document.getElementById('locked-modal').classList.remove('view-hidden');
+            });
+        } else {
+            document.getElementById('scanner-modal').classList.add('view-hidden');
+            document.getElementById('locked-modal').classList.remove('view-hidden');
+        }
+    }
+
+    // --- TRONG GAME ---
+    function openPuzzleModal(id) {
+        currentHotspotId = id; userSelections = [];
+        const hs = HOTSPOTS_DATA.find(h => h.id === id);
+        if(!hs) return;
+
+        const modal = document.getElementById('puzzle-modal');
+        modal.classList.remove('view-hidden');
+        setTimeout(() => modal.classList.add('opacity-100'), 10);
+        renderPuzzleContent(hs);
+    }
+
+    function closePuzzleModal() {
+        const modal = document.getElementById('puzzle-modal');
+        modal.classList.remove('opacity-100');
+        setTimeout(() => modal.classList.add('view-hidden'), 300);
+    }
+
+    function renderPuzzleContent(hs) {
+        let html = `
+            <div class="terminal-header flex-shrink-0">
+                <span>// ENIGMA_DECRYPT_TOOL</span>
+                <button onclick="closePuzzleModal()" class="hover:text-white p-1"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+            <div class="p-5 md:p-8 flex-1 overflow-y-auto custom-scrollbar">
+        `;
+
+        if (hs.isUnlocked) {
+            html += `<div class="mb-4 inline-block font-mono text-[9px] md:text-[10px] text-[var(--terminal-green)] border border-[var(--terminal-green)] px-2 py-1 bg-[rgba(0,255,65,0.1)]">DECRYPTION SUCCESSFUL</div>
+                    ${hs.unlockedImage ? `<img src="${hs.unlockedImage}" class="w-full h-auto mb-5 md:mb-6 border border-[#333] filter grayscale(50%)" />` : ''}
+                    <p class="font-mono text-xs md:text-sm leading-relaxed text-[#ddd] mb-6 md:mb-8 border-l-2 border-[var(--terminal-green)] pl-3 md:pl-4">
+                        ${hs.unlockedText}
+                    </p>
+                    <button onclick="closePuzzleModal()" class="w-full btn-brutal border-[#333] hover:border-white">CLOSE_FILE</button>`;
+        } else {
+            html += `<div class="mb-4 inline-block font-mono text-[9px] md:text-[10px] text-[var(--blood-red)] border border-[var(--blood-red)] px-2 py-1 bg-[rgba(218,0,0,0.1)] animate-pulse">ENCRYPTED NODE</div>
+                     <h3 class="font-bold text-base md:text-lg text-white mb-6 md:mb-8 leading-snug">${hs.question}</h3>`;
+            
+            if (hs.type === 'passcode') {
+                html += `<div class="mb-6 md:mb-8"><input type="text" id="puzzle-input" class="term-input" placeholder=">_ INPUT_CODE" autocomplete="off" /></div>`;
+            } else {
+                html += `<div class="space-y-2 mb-6 md:mb-8">`;
+                hs.options.forEach((opt, idx) => {
+                    html += `<div class="term-choice ${userSelections.includes(idx) ? 'selected' : ''}" onclick="toggleOption(${idx}, '${hs.type}')">
+                                <div class="term-checkbox"></div><span>${opt}</span>
+                             </div>`;
+                });
+                html += `</div>`;
+            }
+            html += `<div class="flex gap-3 md:gap-4 mt-auto pt-2">
+                        <button onclick="verifyPuzzle()" class="flex-1 btn-brutal border-[#444] hover:border-[var(--terminal-green)] hover:text-[var(--terminal-green)] py-3 md:py-2.5">EXECUTE</button>
+                        <button class="btn-brutal border-[#222] text-[#555] hover:text-[#888] cursor-not-allowed px-4 py-3 md:py-2.5" title="Not available"><i data-lucide="help-circle" class="w-4 h-4 md:w-5 md:h-5"></i></button>
+                     </div>`;
+        }
+        html += `</div>`;
+        document.getElementById('puzzle-container').innerHTML = html;
+        if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+    }
+
+    function toggleOption(index, type) {
+        if (type === 'single-choice') userSelections = [index];
+        else {
+            const idx = userSelections.indexOf(index);
+            if (idx > -1) userSelections.splice(idx, 1); else userSelections.push(index);
+        }
+        renderPuzzleContent(HOTSPOTS_DATA.find(h => h.id === currentHotspotId));
+    }
+
+    function verifyPuzzle() {
+        const hs = HOTSPOTS_DATA.find(h => h.id === currentHotspotId);
+        let isCorrect = false;
+        if (hs.type === 'passcode') isCorrect = (document.getElementById('puzzle-input').value.trim() === hs.passcode);
+        else isCorrect = (userSelections.length === hs.correctAnswers.length && userSelections.every(val => hs.correctAnswers.includes(val)));
+
+        if (isCorrect) { 
+            playSuccessSound(); 
+            hs.isUnlocked = true; 
+            renderPuzzleContent(hs); 
+        } 
+        else {
+            playErrorSound(); 
+            const el = document.getElementById('puzzle-container');
+            el.classList.add('animate-shake');
+            setTimeout(() => el.classList.remove('animate-shake'), 400);
+        }
+    }
+</script>
+</body>
+</html>
